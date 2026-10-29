@@ -64,9 +64,9 @@ GAIN = {'clink': .5, 'bag': .4, 'mist': .25, 'reach': .2, 'shadow': .2, 'page': 
         'wipe': .3, 'cloth': .35, 'flutter': .6, 'step': .35, 'thunk': .55}
 for e in E['ev']:
     ty, t, v, d = e['type'], e['t'], e.get('v', 1.0), e.get('d', 1.0)
-    if ty == 'amb_dump': add(amb, fade(wind(d) + flies(d)), t, .55)
-    elif ty == 'amb_wind': add(amb, fade(wind(d, .7)), t, .45)
-    elif ty == 'amb_room': add(amb, fade(norm(lp(brown(d), 400), .2), .3, .3), t, .35)
+    if ty == 'amb_dump': add(amb, fade(hp(wind(d, 1.6), 300) * .7), t, .35)   # no fly buzz and no low rumble: they read as a hum on phones
+    elif ty == 'amb_wind': add(amb, fade(hp(wind(d, 1.4), 300) * .7), t, .3)
+    elif ty == 'amb_room': add(amb, fade(norm(bp(brown(d), 300, 1200), .12), .3, .3), t, .25)
     elif ty == 'amb_village': add(amb, fade(wind(d, .8) * .6 + birds(d) * .5), t, .4)
     elif ty == 'amb_warm': add(amb, fade(wind(d, .6) * .8 + birds(d) * .4, .8, 1.5), t, .4)
     elif ty == 'birds': add(amb, birds(d), t, .5, .2)
@@ -98,7 +98,7 @@ out = np.zeros((N + SR, 2), np.float32); out[:len(score)] += score * 1.0
 out += amb * 1.4 + fx * 1.2
 # the silences: only paper and room (20.0–22.0), wind only after the cut (11.6)
 s0, s1 = int(20.05 * SR), int(21.95 * SR); out[s0:s1] *= .25
-out = np.stack([compress(out[:N, c] * .6, thr=.18, ratio=3.5) for c in (0, 1)], 1); out = np.stack([limit(out[:, c], .3) for c in (0, 1)], 1)
+out = np.stack([compress(out[:N, c] * .6, thr=.18, ratio=3.5) for c in (0, 1)], 1); out = np.stack([limit(out[:, c], .26) for c in (0, 1)], 1)
 sf.write(os.path.join(HERE, 'out/mix.wav'), out, SR)
 r = lambda x: 20 * np.log10(np.sqrt((x ** 2).mean()) + 1e-9)
 print('mix', round(N / SR, 2), 's | score', round(r(score), 1), 'amb', round(r(amb), 1), 'fx', round(r(fx), 1), 'dB')
