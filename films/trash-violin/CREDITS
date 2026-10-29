@@ -1,0 +1,16 @@
+쓰레기로 만든 바이올린 — credits and licences
+
+Film: made entirely in code with the Lemo-Opuscar library (github.com/lemomo-ai/lemo-opuscar, MIT), Watercolor Brush style.
+  engine.js and paper.py are adapted from the style's demo engine (MIT).
+Music: original composition (this project). No third-party melody.
+  Samples (CC0 1.0): VS Chamber Orchestra: Community Edition (Versilian Studios); Versilian Community Sample Library (Versilian Studios).
+  Instruments used: violin, violin_pizz, violins, violins_pizz, violas, cellos, contrabass, horn, tenor_sax, glockenspiel, harp, timpani, bass_drum.
+Sound effects and ambience: synthesised procedurally (this project), no recordings.
+Fonts (SIL Open Font License 1.1, via Google Fonts, subset to the characters used):
+  Gowun Batang (Yanghee Ryu), Nanum Pen Script (Sandoll / NAVER).
+
+Story: based on the true story of the Recycled Orchestra of Cateura (Orquesta de Instrumentos Reciclados de Cateura), Paraguay.
+  Facts were checked against public reporting and the 2013 "Landfill Harmonic" trailer; no footage, images, compositions,
+  interview audio or dialogue from any source are used. The girl is a composite character, not a real person.
+  The last two subtitles paraphrase in Korean a remark by conductor Favio Chávez in that trailer.
+Suggested description line: 파라과이 카테우라 재활용 오케스트라의 실화를 바탕으로 재구성한 애니메이션입니다. 영상 속 아이는 단원들을 대표하는 가상 인물입니다.

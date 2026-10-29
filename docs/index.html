@@ -1,0 +1,150 @@
+<!doctype html>
+<html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Claude로 만드는 애니메이션 숏츠</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&family=IBM+Plex+Sans+KR:wght@400;600&display=swap">
+<style>
+/* Layout: a contact sheet of the 66 styles — filter chips on top, cards in a wrapping grid, recommended ones marked with a vermilion stamp */
+:root{--bg:#f3eee6;--card:#fbf8f2;--ink:#26221e;--muted:#6d655c;--line:#ddd3c4;--pick:#d9482b;--ok:#4f7d6a;--chip:#ebe3d6;
+  --serif:"Gowun Batang","Noto Serif KR",serif;--sans:"IBM Plex Sans KR",system-ui,sans-serif}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#1c1a18;--card:#262320;--ink:#eee7dc;--muted:#a99f93;--line:#3a352f;--pick:#ef6a4c;--ok:#7fb39c;--chip:#2f2b27;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#1c1a18;--card:#262320;--ink:#eee7dc;--muted:#a99f93;--line:#3a352f;--pick:#ef6a4c;--ok:#7fb39c;--chip:#2f2b27;color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:15px;line-height:1.55;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:28px 56px}
+.wrap{max-width:1180px;margin:0 auto;display:grid;gap:22px}
+h1{font-family:var(--serif);font-weight:700;font-size:clamp(28px,4.4vw,40px);margin:0;text-wrap:balance}
+.lede{color:var(--muted);margin:6px 0 0;max-width:68ch}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{font-family:var(--sans);font-size:14px;border:1px solid var(--line);background:var(--chip);color:var(--ink);border-radius:999px;padding:5px 13px;cursor:pointer}
+.chip[aria-pressed="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.chip:focus-visible{outline:2px solid var(--pick);outline-offset:2px}
+h2{font-family:var(--serif);font-size:20px;margin:14px 0 0;display:flex;gap:10px;align-items:baseline}
+h2 small{font-family:var(--sans);font-size:13px;color:var(--muted);font-weight:400}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:14px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:10px;overflow:hidden;display:flex;flex-direction:column;min-width:0;position:relative}
+.card img{width:100%;aspect-ratio:16/9;object-fit:cover;display:block;background:var(--chip)}
+.body{padding:10px 12px 12px;display:grid;gap:3px}
+.name{font-weight:600;font-size:16px}
+.en{font-size:12px;color:var(--muted)}
+.desc{font-size:13.5px}
+.fit{font-size:13px;color:var(--ok)}
+.card.rec{border-color:var(--pick);box-shadow:0 0 0 1px var(--pick)}
+.stamp{position:absolute;top:8px;left:8px;background:var(--pick);color:#fff;font-size:12px;font-weight:600;border-radius:6px;padding:2px 8px}
+.card.dim img{filter:grayscale(.5) opacity(.8)}
+.note{font-size:13px;color:var(--muted)}
+.films{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:18px}
+.films figure{margin:0;display:grid;gap:6px}.films video{width:100%;aspect-ratio:9/16;border-radius:8px;background:#000}
+.films figcaption{font-size:14px;color:var(--muted)}a{color:inherit}
+</style></head><body>
+<div class="wrap">
+  <header>
+    <h1>Claude로 만드는 애니메이션 숏츠</h1>
+    <p class="lede">그림·애니메이션·음악·효과음·자막을 전부 코드로 만든 세로 숏츠. 첫 작품은 파라과이 카테우라 재활용 오케스트라 실화를 바탕으로 한 「쓰레기로 만든 바이올린」입니다. <a href="https://github.com/heekeunlee/claude-animation-shorts">만드는 방법과 소스 →</a></p>
+  </header>
+  <div class="films">
+    <figure><video src="media/cel.mp4" poster="media/cel-poster.jpg" controls playsinline preload="none"></video><figcaption>80년대 셀 애니 · 50초 · 빛이 켜지는 이야기</figcaption></figure>
+    <figure><video src="media/watercolor.mp4" poster="media/watercolor-poster.jpg" controls playsinline preload="none"></video><figcaption>수채화 · 45초 · 색이 번지는 이야기</figcaption></figure>
+  </div>
+</div>
+<div class="wrap" style="margin-top:36px">
+  <header>
+    <h2 style="font-size:28px;margin:0">66가지 화풍 갤러리</h2>
+    <p class="lede">Lemo-Opuscar 라이브러리의 모든 화풍을 대표 장면 한 컷씩 모았습니다. 「쓰레기로 만든 바이올린」에 잘 맞는 화풍엔 <b style="color:var(--pick)">추천</b> 표시와 이 이야기에 썼을 때의 모습을 적어 두었습니다. 지금 영상은 '수채화'입니다.</p>
+  </header>
+  <div class="chips" role="group" aria-label="보기">
+    <button class="chip" data-f="rec" aria-pressed="true" type="button">이 이야기에 추천</button>
+    <button class="chip" data-f="ok" aria-pressed="false" type="button">추천 + 가능</button>
+    <button class="chip" data-f="all" aria-pressed="false" type="button">전체 66개</button>
+  </div>
+  <div id="out" class="wrap" style="gap:12px"></div>
+  <p class="note">썸네일: <a href="https://github.com/lemomo-ai/lemo-opuscar">LemoLab Lemo-Opuscar</a> 데모 영상 장면, CC BY 4.0 (크기를 줄임). 우리 영상은 같은 화풍 규칙으로 새로 그립니다.</p>
+</div>
+<script>
+// [slug, 한국어 이름, English, 분류, 설명, 적합도 2=추천 1=가능 0=맞지 않음, 이 이야기에 쓰면]
+const S=[
+['crayon-book','크레용 그림책','Crayon Picture Book','손그림·회화','아이가 크레용으로 그린 동화책',2,'쓰레기를 줍던 아이가 직접 그린 일기처럼. 첫 음에 크레용 색이 번지는 연출이 아이 시점과 딱 맞음'],
+['watercolor','수채화','Watercolor Brush','손그림·회화','붓 자국이 스스로 칠해지는 수채 일기',2,'지금 버전. 회색에서 색으로 번지는 연출'],
+['ink-wash','수묵화','Chinese Ink Wash','손그림·회화','먹의 농담과 여백',1,'흑백 먹 세상에 첫 음과 함께 색이 스며드는 반전은 가능. 남미 이야기와 문화적 거리감이 있음'],
+['impasto','유화 임파스토','Impasto Oil Painting','손그림·회화','두꺼운 물감과 나이프 자국',2,'묵직하고 감동적인 톤. 쓰레기산의 질감, 노을 무대 조명이 유화로 강렬하게 살아남'],
+['one-line','한 줄 드로잉','One-line Drawing','손그림·회화','펜을 떼지 않는 한 줄 그림',2,'쓰레기 → 악기 → 오케스트라가 한 줄로 이어지며 변신. 미니멀하고 세련된 감동'],
+['whiteboard','화이트보드 설명','Whiteboard Explainer','손그림·회화','손이 그려 가며 설명하는 강의',0,''],
+['urban-sketch','펜 담채 스케치','Urban Sketch · Pen & Wash','손그림·회화','펜 선 위에 엷은 채색, 여행 스케치북',2,'현장 취재 스케치 같은 다큐 느낌. 실화라는 무게가 잘 전달됨'],
+['chalkboard','칠판 분필','Chalkboard','손그림·회화','칠판 위 분필 강의',0,''],
+['shadow-puppet','그림자극','Shadow Puppetry','동양 전통','빛 막 뒤 가죽 인형',2,'실루엣 무대. 손·바이올린·오케스트라 실루엣이 아름다움. 마지막 무대 장면과 자연스럽게 연결'],
+['ukiyoe','우키요에','Ukiyo-e','동양 전통','일본 목판화',1,'쓰레기산을 후지산처럼 그리는 재미는 있으나 일본색이 강함'],
+['papercut-red','붉은 전지','Red Paper-cut','동양 전통','붉은 종이 오려 붙이기',0,''],
+['paper-lantern','종이 라이트박스','Paper-cut Lightbox','동양 전통','종이 조각 뒤에서 빛이 비치는 상자',2,'겹겹의 종이 실루엣 뒤로 빛이 켜짐. 첫 음에 무대 조명처럼 빛이 들어오는 연출이 감동적'],
+['risograph','리소그래프','Risograph Print','인쇄·판화','두세 색 겹친 공판 인쇄',1,'포스터 같은 세련됨. 감정보다는 스타일이 앞섬'],
+['halftone-dossier','망점 수사 파일','Halftone Dossier','인쇄·판화','신문 망점, 수사 기록',0,''],
+['woodcut','목판화','Woodcut Print','인쇄·판화','칼로 새긴 흑백 목판',1,'거칠고 강한 질감이 빈민가의 삶과 어울림. 색 전환은 제한적'],
+['engraving','동판화','Copperplate Engraving','인쇄·판화','정밀한 선의 옛 도감',1,'악기 부품 도감 장면엔 최고. 인물 감정 표현은 약함'],
+['silkscreen-poster','실크스크린 포스터','Silkscreen Travel Poster','인쇄·판화','빈티지 여행 포스터',1,'각 장면이 포스터 한 장. 감정선보다는 디자인'],
+['printed-long-take','인쇄 롱테이크','Printed Long Take','인쇄·판화','인쇄물 위를 한 번에 훑는 카메라',1,'쓰레기산에서 무대까지 한 장면으로 이어 찍기 가능'],
+['swiss-motion','스위스 타이포','Swiss Motion Graphics','그래픽·타이포','격자와 굵은 글자',0,''],
+['spy-titles','60년대 첩보 오프닝','60s Spy Title Sequence','그래픽·타이포','007식 실루엣 오프닝',0,''],
+['art-deco','아르데코','Art Deco','그래픽·타이포','금빛 기하학 장식',0,''],
+['blueprint','설계도','Blueprint','그래픽·타이포','파란 청사진 도면',1,'깡통 바이올린 설계도 장면에만 어울림'],
+['stained-glass','스테인드글라스','Stained Glass','그래픽·타이포','납선과 빛나는 유리',2,'버려진 유리 조각이 빛나는 창이 된다는 은유. 마지막 오케스트라가 성당 창처럼 빛남'],
+['pictogram-motion','픽토그램','Pictogram Motion','그래픽·타이포','올림픽식 그림 문자',0,''],
+['ascii-crt','아스키 터미널','ASCII / CRT Terminal','그래픽·타이포','초록 글자 모니터',0,''],
+['dataviz','데이터 스토리','Data Storytelling','정보·발표','차트로 하는 이야기',0,''],
+['iso-infographic','등각 인포그래픽','Isometric Infographic','정보·발표','입체 도식 설명',0,''],
+['dark-keynote','다크 키노트','Dark Tech Keynote','정보·발표','신제품 발표 무대',0,''],
+['living-screencast','화면 녹화','Living Screencast','정보·발표','움직이는 데스크톱 화면',0,''],
+['hologram-hud','홀로그램 HUD','Sci-fi Hologram HUD','정보·발표','SF 홀로그램 인터페이스',0,''],
+['transit-map','지하철 노선도','Transit Map','정보·발표','노선도 문법',0,''],
+['isometric-picture-book','등각 그림책','Isometric Picture Book','정보·발표','비스듬히 내려다본 미니어처 그림책',1,'마을 전체를 미니어처로 보여주기 좋음. 클로즈업 감정 장면은 약함'],
+['circuit-board','회로 기판','Circuit Board','정보·발표','전자 회로 위 이야기',0,''],
+['rubber-hose','1930년대 고무호스 카툰','1930s Rubber Hose Cartoon','카툰·애니','흑백 초기 디즈니풍 슬랩스틱',0,''],
+['cel-anime-80s','80년대 셀 애니','80s Cel Anime','카툰·애니','80년대 일본 극장 애니 감성',2,'인물 표정이 가장 잘 사는 화풍. 소녀의 눈물, 노을, 무대 조명이 감성 애니로'],
+['scifi-toon','SF 시트콤 툰','Sci-Fi Sitcom Toon','카툰·애니','1·2화에 쓴 코믹 카툰',0,''],
+['midcentury-toon','50년대 플랫 카툰','Mid-century Cartoon','카툰·애니','단순한 도형의 레트로 애니',1,'따뜻하고 귀여운 동화 톤. 실화의 무게는 가벼워짐'],
+['pixel-rpg','16비트 픽셀 RPG','16-bit Pixel RPG','게임','슈퍼패미컴 RPG',1,'"쓰레기 → 전설의 악기" 아이템 제작 연출이 재밌음. 감동은 레트로 게임 감성으로'],
+['hd-2d','HD-2D','HD-2D','게임','픽셀 인물 + 입체 조명 디오라마',2,'픽셀 아이들이 빛나는 입체 무대에 서는 장면이 아름다움. 감동 + 개성'],
+['microgame','미니게임 연타','Microgame Frenzy','게임','5초짜리 게임 연속',0,''],
+['game-show','게임쇼 플랫','Game Show Flat','게임','예능 리듬 그래픽',0,''],
+['silent-film','1920년대 무성영화','1920s Silent Film','영화·시대','흑백 필름과 자막 카드',1,'자막만으로 이야기하는 형식과 잘 맞음. 흑백에서 마지막에만 색이 들어오는 반전 가능'],
+['backrooms','리미널 파운드 푸티지','Liminal Found Footage','영화·시대','기묘한 공간의 녹화 영상',0,''],
+['brick-toy','블록 장난감','Brick Toy','소재·3D','블록으로 만든 세상',1,'쓰레기 조각 → 블록 조립 → 악기. 조립 장면은 최고, 감정은 장난감 톤'],
+['paper-popup','종이 팝업북','Paper Pop-up Book','소재·3D','펼치면 일어서는 입체 종이책',2,'페이지를 넘길 때마다 쓰레기산·마을·무대가 일어섬. 동화 같은 감동, 쇼츠에서 눈에 띔'],
+['tilt-shift','틸트시프트 미니어처','Tilt-Shift Miniature','소재·3D','실제 같은 미니어처 도시',1,'쓰레기 매립지를 장난감 마을처럼. 거리감 있는 시선'],
+['lowpoly-island','로우폴리 섬','Low-poly Isometric Island','소재·3D','각진 3D 섬',1,'쓰레기산이 점점 초록으로 바뀌는 연출 가능'],
+['glass-product','유리 제품 렌더','Glass Product Render','소재·3D','광고 같은 유리 질감',0,''],
+['memphis-diorama','멤피스 디오라마','Memphis Diorama','소재·3D','원색 장난감 디오라마',0,''],
+['desktop-flythrough','책상 위 비행','Desktop Flythrough','소재·3D','책상 위 물건 사이를 나는 카메라',0,''],
+['satellite-briefing','위성 브리핑','Satellite Briefing','실증 영상','실제 위성사진 분석',0,''],
+['briefing-board','엔지니어링 보드','Engineering Briefing Board','실증 영상','공학 브리핑',0,''],
+['lidar-survey','라이다 측량','LiDAR Survey','실증 영상','점구름 측량',0,''],
+['white-model','백색 모형 투사','Projection on White Model','실증 영상','흰 모형에 영상 투사',0,''],
+['data-physical','데이터 실물화','Data Physicalization','실증 영상','데이터를 물건으로',0,''],
+['teardown','분해도','Exploded Teardown','실증 영상','제품 분해 설명',1,'깡통 바이올린 분해도 한 장면에만'],
+['microscope','현미경 이야기','Microscope Story','실증 영상','현미경 속 세계',0,''],
+['archive-lighttable','기록물 라이트테이블','Archive Light Table','실증 영상','사진·문서 기록 정리',0,''],
+['caption-news','자막 뉴스','Caption News','편집·다큐','실제 영상 + 자막 뉴스',0,'실제 영상 소재가 필요해 저작권상 제외'],
+['newsreel','1920년대 뉴스릴','1920s Newsreel','편집·다큐','옛 뉴스 영화',0,''],
+['countdown','실시간 카운트다운','Live Countdown Split-screen','편집·다큐','분할 화면 카운트다운',0,''],
+['city-symphony','타임랩스 교향곡','Time-lapse Symphony','편집·다큐','도시 타임랩스 편집',0,''],
+['visual-investigation','시각 조사','Visual Investigation','편집·다큐','영상 증거 분석',0,''],
+['kino-montage','구성주의 몽타주','Constructivist Montage','편집·다큐','러시아 아방가르드 편집',0,''],
+['telestrator','스포츠 전술판','Sports Telestrator','편집·다큐','중계 화면 위 그림',0,''],
+['news-package','방송 뉴스 패키지','Broadcast News Package','편집·다큐','뉴스 그래픽 패키지',0,''],
+];
+let filter='rec';
+function card(s){
+  const [slug,ko,en,cat,desc,fit,use]=s;
+  return `<article class="card${fit===2?' rec':''}${fit===0?' dim':''}">${fit===2?'<span class="stamp">추천</span>':''}
+  <img src="img/${slug}.jpg" alt="${ko} 화풍 대표 장면" loading="lazy" width="560" height="315">
+  <div class="body"><div class="name">${ko}</div><div class="en">${en}</div><div class="desc">${desc}</div>${use?`<div class="fit">${fit===0?'':'이 이야기에 쓰면: '}${use}</div>`:''}</div></article>`;
+}
+function draw(){
+  const L=S.filter(s=>filter==='all'||(filter==='ok'?s[5]>=1:s[5]===2));
+  const cats=[...new Set(L.map(s=>s[3]))];
+  document.getElementById('out').innerHTML = filter==='rec'
+    ? `<h2>이 이야기에 추천 <small>${L.length}개</small></h2><div class="grid">${L.map(card).join('')}</div>`
+    : cats.map(c=>{const g=L.filter(s=>s[3]===c);return `<h2>${c} <small>${g.length}개</small></h2><div class="grid">${g.map(card).join('')}</div>`}).join('');
+}
+document.querySelectorAll('.chip').forEach(b=>b.onclick=()=>{filter=b.dataset.f;document.querySelectorAll('.chip').forEach(x=>x.setAttribute('aria-pressed',x===b));try{localStorage.setItem('f',filter)}catch(e){}draw()});
+try{const f=localStorage.getItem('f');if(f){filter=f;document.querySelectorAll('.chip').forEach(x=>x.setAttribute('aria-pressed',x.dataset.f===f))}}catch(e){}
+draw();
+</script>
+
+</body></html>
